@@ -2,7 +2,9 @@ pipeline {
     agent any
     environment {
         DOCKER_IMAGE = 'flask-cicd-demo'
-        K8S_DEPLOYMENT_FILE = 'k8s.yaml' // Change this if your deployment file has a different name
+        K8S_DEPLOYMENT_DIR = 'k8s'  // Folder containing deployment.yaml and service.yaml
+        DEPLOYMENT_FILE = "${K8S_DEPLOYMENT_DIR}/deployment.yaml"
+        SERVICE_FILE = "${K8S_DEPLOYMENT_DIR}/service.yaml"
     }
 
     stages {
@@ -58,8 +60,9 @@ pipeline {
             }
             steps {
                 script {
-                    // Deploy to Kubernetes using the specified YAML file
-                    bat "kubectl apply -f ${K8S_DEPLOYMENT_FILE}"
+                    // Deploy to Kubernetes using both deployment.yaml and service.yaml
+                    bat "kubectl apply -f ${DEPLOYMENT_FILE}"
+                    bat "kubectl apply -f ${SERVICE_FILE}"
                 }
             }
         }
