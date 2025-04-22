@@ -8,20 +8,19 @@ pipeline {
     }
 
     stages {
-       stage('Checkout') {
-       steps {
-        git branch: 'main', url: 'https://github.com/Anushka040604/flask-cicd-demo.git'
-       }
-}
-
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Anushka040604/flask-cicd-demo.git'
+            }
+        }
 
         stage('Run Tests') {
             steps {
                 bat '''
-                    python3 -m venv venv
-                    source venv/bin/activate
+                    python -m venv venv
+                    call venv\\Scripts\\activate
                     pip install -r requirements.txt
-                    pytest || true
+                    pytest || exit /B 0
                 '''
             }
         }
@@ -37,8 +36,8 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    bat '''
+                        echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
                         docker push ${DOCKER_IMAGE}:latest
                     '''
                 }
@@ -48,10 +47,10 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 withCredentials([file(credentialsId: "${KUBECONFIG_CREDENTIALS_ID}", variable: 'KUBECONFIG')]) {
-                    sh '''
-                        export KUBECONFIG=$KUBECONFIG
-                        kubectl apply -f k8s/deployment.yaml
-                        kubectl apply -f k8s/service.yaml
+                    bat '''
+                        set KUBECONFIG=%KUBECONFIG%
+                        kubectl apply -f k8s\\deployment.yaml
+                        kubectl apply -f k8s\\service.yaml
                         kubectl rollout status deployment/flask-deployment
                     '''
                 }
