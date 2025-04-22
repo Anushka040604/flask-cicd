@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/Anushka040604/flask-cicd-demo.git'
+               git branch: 'main', url: 'https://github.com/Anushka040604/flask-cicd-demo.git'
             }
         }
         stage('Run Tests') {
