@@ -44,3 +44,4 @@ Go to your repository → **Settings → Secrets → Actions**, and add the foll
 Generate `KUBECONFIG` (in PowerShell, replace `base64` with `certutil`):
 ```bash
 cat ~/.kube/config | base64
+
