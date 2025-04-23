@@ -52,3 +52,5 @@ jobs:
       run: |
         kubectl apply -f deployment.yaml
         kubectl apply -f service.yaml
+        kubectl rollout status deployment/flask-app-deployment
+        kubectl get pods  # Check the status of the pods after deployment
