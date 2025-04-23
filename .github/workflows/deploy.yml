@@ -46,11 +46,23 @@ jobs:
 
     - name: Set up kubeconfig
       run: |
+        # Ensure the .kube directory exists
+        mkdir -p $HOME/.kube
+        
+        # Set up the kubeconfig using the secret
         echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
 
     - name: Deploy to Kubernetes
       run: |
+        # Apply Kubernetes manifests
         kubectl apply -f deployment.yaml
         kubectl apply -f service.yaml
+
+        # Wait for the deployment rollout to complete
         kubectl rollout status deployment/flask-app-deployment
-        kubectl get pods  # Check the status of the pods after deployment
+
+        # Check the status of the pods and ensure they are running
+        kubectl get pods --selector=app=flask-app --watch --timeout=2m
+
+        # Optionally, you can add more checks or logging here
+        kubectl logs -l app=flask-app --tail=10
