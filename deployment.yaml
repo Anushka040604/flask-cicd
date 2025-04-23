@@ -13,7 +13,7 @@ spec:
         app: flask-app
     spec:
       containers:
-      - name: flask-container
-        image: anushka0407/flask-cicd-demo:latest
-        ports:
-        - containerPort: 5000
+        - name: flask-container
+          image: anushka0407/flask-app:latest
+          ports:
+            - containerPort: 5000
